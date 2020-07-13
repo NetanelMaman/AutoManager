@@ -64,6 +64,125 @@ public class DatabaseManager {
 		}
 	}
 	
+	public CarModel carFromDB(String id) {
+		BufferedReader br = null;
+		FileReader reader = null;
+		try {
+			Path p = Paths.get(carPath + "/" + id);
+			if (Files.isDirectory(p)) {
+				reader = new FileReader(carPath + "/" + id + "/Usage.csv");
+				br = new BufferedReader(reader);
+				ArrayList<String> lines = new ArrayList<String>();
+				String line;
+				
+				while ((line = br.readLine()) != null) {
+					lines.add(line.split(",")[1]);
+				}
+				
+				br.close();
+				reader.close();
+				
+				return new CarModel(lines);
+			}
+		} catch (IOException e) {
+			try {
+				if (br != null) {
+					br.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
+	public CarModel carFromDBForUser(String userId,String id) {
+		BufferedReader br = null;
+		FileReader reader = null;
+		try {
+			Path p = Paths.get(carPath + "/" + id);
+			if (Files.isDirectory(p)) {
+				reader = new FileReader(carPath + "/" + id + "/Users.csv");
+				br = new BufferedReader(reader);
+				String line;
+				
+				while ((line = br.readLine()) != null) {
+					if (userId.equals(line.split(",")[1])) {
+						br.close();
+						reader.close();
+						return null;
+					}
+				}
+				
+				br.close();
+				reader.close();
+				
+				return carFromDB(id);
+			}
+		} catch (IOException e) {
+			try {
+				if (br != null) {
+					br.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	public CarModel carFromDBFromUser(String userId,String id) {
+		BufferedReader br = null;
+		FileReader reader = null;
+		try {
+			Path p = Paths.get(carPath + "/" + id);
+			if (Files.isDirectory(p)) {
+				reader = new FileReader(carPath + "/" + id + "/Users.csv");
+				br = new BufferedReader(reader);
+				String line;
+				
+				while ((line = br.readLine()) != null) {
+					if (userId.equals(line.split(",")[1])) {
+						br.close();
+						reader.close();
+						return carFromDB(id);
+					}
+				}
+				
+				br.close();
+				reader.close();
+				
+				return null;
+			}
+		} catch (IOException e) {
+			try {
+				if (br != null) {
+					br.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
 	public  CarUse usageFromDB(String id) {
 		BufferedReader br = null;
 		FileReader reader = null;
@@ -101,6 +220,30 @@ public class DatabaseManager {
 			return null;
 		}
 		return null;
+	}
+	
+	public ArrayList<CarModel> getAllCars(String userId, boolean add) {
+		ArrayList<CarModel> cars = new ArrayList<CarModel>();
+		File folder = new File(carPath);
+		File[] listOfFiles = folder.listFiles();
+		String[] arr;
+		CarModel car;
+		if (listOfFiles == null) {
+			return null;
+		}
+		for (File id: listOfFiles) {
+			arr = id.getPath().split(Pattern.quote(File.separator));
+			if (add) {
+				car = carFromDBForUser(userId, arr[arr.length - 1] );
+			} else {
+				car = carFromDBFromUser(userId, arr[arr.length - 1] );
+			}
+			
+			if (car != null) {
+				cars.add(car);
+			}
+		}
+		return cars;
 	}
 	
 	public  void updateUsage(String id, CarUse usage) {
@@ -395,6 +538,49 @@ public class DatabaseManager {
 			e.printStackTrace();
 		}
 	}
+	public  void addUser(Driver d) {
+		String id = d.getID();
+		String firstName = d.getFirstName();
+		String lastName = d.getLastName();
+		String phoneNumber = d.getPhoneNumber();
+		String email = d.getEmail();
+		String password = d.getPassword();
+		int age = d.getAge();
+		int drivingExperience = d.getDrivingExperience();
+		int drivingLicenseType = d.getDrivingLicenseType();
+		FileWriter writer = null;
+		try {
+			Path p = Paths.get(userPath + "/" + id);
+			if (!Files.isDirectory(p)) {
+				Files.createDirectories(p);
+				File users = new File(userPath + "/" + id + "/Cars.csv");
+				users.createNewFile();
+				File file = new File(userPath + "/" + id + "/Info.csv");
+				writer = new FileWriter(file, true);
+				writer.write("ID," + id + "\r\n");
+				writer.write("First Name," + firstName + "\r\n");
+				writer.write("Last Name," + lastName + "\r\n");
+				writer.write("Phone Number," + phoneNumber + "\r\n");
+				writer.write("Email," + email + "\r\n");
+				writer.write("Password," + password + "\r\n");
+				writer.write("Age," + Integer.toString(age) + "\r\n");
+				writer.write("Driving Experience," + Integer.toString(drivingExperience) + "\r\n");
+				writer.write("Driving License Type," + Integer.toString(drivingLicenseType) + "\r\n");
+				writer.close();
+			}
+		}
+		catch (IOException e) {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+			e.printStackTrace();
+		}
+	}
 	
 	public  void addCarToUser(String carId, String userId) {
 		BufferedReader br = null;
@@ -602,6 +788,44 @@ public class DatabaseManager {
 		return null;
 	}
 	
+	public ArrayList<String> getUsersOfCar(String carId) {
+		BufferedReader br = null;
+		FileReader reader = null;
+		FileWriter writer = null;
+		try {
+			Path p = Paths.get(carPath + "/" + carId);
+			if (Files.isDirectory(p)) {
+				reader = new FileReader(carPath + "/" + carId + "/Users.csv");
+				br = new BufferedReader(reader);
+				ArrayList<String> lines = new ArrayList<String>();
+				String line;
+				boolean exist = false;
+				
+				while ((line = br.readLine()) != null) {
+					lines.add(line.split(",")[1]);
+				}
+				
+				br.close();
+				reader.close();
+				
+				return lines;
+			}
+		} catch (IOException e) {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return null;
+			}
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
 	public  String getUserUsageForCar(String userId, String carId) {
 		String usage = "";
 		int fuel = 0, mileage = 0;
@@ -657,15 +881,19 @@ public class DatabaseManager {
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+//				e1.printStackTrace();
 			}
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 		return null;
 	}
 	
 	public  boolean signIn(String userId, String password) {
+		String pass = userPassword(userId);
+		if (pass == null) {
+			return false;
+		}
 		return password.equals(userPassword(userId));
 	}
 }

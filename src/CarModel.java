@@ -1,6 +1,12 @@
+import java.util.ArrayList;
 
 public class CarModel extends Vehicle{
 
+	private String type;
+	private String modelName;
+	private int year;
+	private String color;
+	
 	public CarModel(String iDCar, int mileage, String dateOfTest, TotalExpenses expenses, String type, String modelName,
 			int year, String color) {
 		super(iDCar, mileage, dateOfTest, expenses);
@@ -9,10 +15,15 @@ public class CarModel extends Vehicle{
 		this.year = year;
 		this.color = color;
 	}
-	private String type;
-	private String modelName;
-	private int year;
-	private String color;
+	
+	public CarModel(ArrayList<String> info) {
+		super(info.get(0), Integer.parseInt(info.get(1)), info.get(2),new TotalExpenses(null, null, null));
+		this.type = info.get(3);
+		this.modelName = info.get(4);
+		this.year = Integer.parseInt(info.get(5));
+		this.color = info.get(6);
+	}
+	
 	public String getType() {
 		return type;
 	}
@@ -38,4 +49,10 @@ public class CarModel extends Vehicle{
 		this.color = color;
 	}
 	
+	public String showCarDetails() {
+		return  "ID: " + getIDCar() + ", " + "Mileage: " + Integer.toString(getMileage()) + ", " 
+				+ "Date of test: " + getDateOfTest() + ", " + "Type: " + getType() + ", "
+				+ "Model name: " + modelName + ", " + "Year: " +  Integer.toString(year) + ", "
+				+ "Color: " + color;
+	}
 }

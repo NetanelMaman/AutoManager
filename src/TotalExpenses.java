@@ -12,6 +12,10 @@ public class TotalExpenses {
 		this.tickets = tickets;
 	}
 	
+	public int Expenses() {
+		return usage.getExpenses();
+	}
+	
 	public void visitGarage() {
 		usage.setExpenses(garage.getCommetVisit());
 	}

@@ -37,6 +37,13 @@ public class CarUse {
 		this.mileage += mileage;
 	}
 	
-	
+	public String showUsage(String id) {
+		String usage = "";
+		usage += "CarId," + id + "\r\n";
+		usage += "Fuel," + Integer.toString(fuel) + "\r\n";
+		usage += "Mileage," + Integer.toString(mileage) + "\r\n";
+		usage += "Expenses," + Integer.toString(expenses) + "\r\n";
+		return usage;
+	}
 	
 }

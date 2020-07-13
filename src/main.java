@@ -1,29 +1,46 @@
+import javax.swing.JFrame;
 
+import java.util.ArrayList;
+import java.util.Scanner;
 public class main {
 
+	public static DatabaseManager manager;
+	
 	public static void main(String[] args) {
-		DatabaseManager manager = DatabaseManager.getInstance(System.getProperty("user.dir") + "/Database/Cars",
-																System.getProperty("user.dir") + "/Database/Users");
-		manager.addCar("732", 500, "27.09", "Hatchback", "Opel Astra", "2017", "Black");
-		CarUse c = manager.usageFromDB("732");
-		c.setExpenses(5000);
-		c.setFuel(300);
-		c.setMileage(50000);
-		manager.updateUsage("732", c);
-		manager.addTicket("732", "parking", "350");
-		manager.addTicket("732", "driving", "550");
-		manager.removeUserToCar("732", "5533");
-		manager.removeUserToCar("732", "5511");
-		manager.addUser("5533", "N", "M", "1342", "asd", "asd", 30, 7, 2);
-		manager.addUser("5511", "N", "M", "1342", "asd", "asd", 30, 7, 2);
-		manager.addCarToUser("732", "5511");
 		
-		manager.reportDriverDaily("5511", "732", "30", "52", "15", "0");
-		manager.reportDriverDaily("5511", "731", "30", "52", "15", "0");
-		manager.reportDriverDaily("5533", "732", "30", "52", "15", "0");
-//		System.out.println(DatabaseManager.getDailyUsage("5511", "13-07-2020 09-30-55"));
-		System.out.println(manager.getDailyUsageBetweenDates("5511", "13-07-2020 00-00-00.csv", "14-07-2020 00-00-00.csv"));
-		System.out.println(manager.getUserUsageForCar("5511", "732"));
-	}
-
+		Scanner s = new Scanner(System.in);
+		int option = 1;
+		String userId = utils.registerOrLogin();
+		
+		while(option != 0) {
+			System.out.println("Choose operation number:");
+			System.out.println("1: Add or Remove a car to manage");
+			System.out.println("2: Enter your daily usage");
+			System.out.println("3: Show car usage");
+			System.out.println("4: Filter usage between dates");
+			System.out.println("5: Show drivers usage for a car");
+			System.out.println("0: To quit");
+			option = s.nextInt();
+			s.nextLine();
+			switch (option) {
+				case 1:
+					utils.addOrRemoveCar(userId);
+					break;
+				case 2:
+					utils.addUserInput(userId);
+					break;
+				case 3:
+					utils.costOfCar(userId);
+					break;
+				case 4:
+					utils.usageFromDates(userId);
+					break;
+				case 5:
+					utils.usageOfUsersForCar(userId);
+					break;
+				default:
+					return;
+			}
+		}
+	}	
 }
