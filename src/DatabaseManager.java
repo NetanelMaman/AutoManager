@@ -9,13 +9,27 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class DatabaseManager {
 	
-	static String carPath = System.getProperty("user.dir") + "/Database/Cars";
-	static String userPath = System.getProperty("user.dir") + "/Database/Users";
+	private String carPath = System.getProperty("user.dir") + "/Database/Cars";
+	private String userPath = System.getProperty("user.dir") + "/Database/Users";
+	private static DatabaseManager manager_instance = null;
 	
-	public static void addCar(String id, int mileage, String dateOfTest, String type, String modelName, String year, String color) {
+	public static DatabaseManager getInstance(String carPath, String userPath) {
+		if (manager_instance == null) {
+			manager_instance = new DatabaseManager(carPath, userPath);
+		}
+		return manager_instance;
+	}
+	
+	private DatabaseManager(String carPath, String userPath) {
+		this.carPath = carPath;
+		this.userPath = userPath;
+	}
+	
+	public  void addCar(String id, int mileage, String dateOfTest, String type, String modelName, String year, String color) {
 		FileWriter writer = null;
 		try {
 			Path p = Paths.get(carPath + "/" + id);
@@ -50,7 +64,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static CarUse usageFromDB(String id) {
+	public  CarUse usageFromDB(String id) {
 		BufferedReader br = null;
 		FileReader reader = null;
 		try {
@@ -89,7 +103,7 @@ public class DatabaseManager {
 		return null;
 	}
 	
-	public static void updateUsage(String id, CarUse usage) {
+	public  void updateUsage(String id, CarUse usage) {
 		BufferedReader br = null;
 		FileReader reader = null;
 		FileWriter writer = null;
@@ -148,7 +162,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static void updateUsage(String id, String mileage, String fuel) {
+	public  void updateUsage(String id, String mileage, String fuel) {
 		BufferedReader br = null;
 		FileReader reader = null;
 		FileWriter writer = null;
@@ -212,7 +226,7 @@ public class DatabaseManager {
 	 * @param type - driving or parking
 	 * @param cost - cost of the ticket
 	 */
-	public static void addTicket(String id, String type, String cost) {
+	public  void addTicket(String id, String type, String cost) {
 		FileWriter writer = null;
 		try {
 			Path p = Paths.get(carPath + "/" + id);
@@ -246,7 +260,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static void addUserToCar(String carId, String userId) {
+	public  void addUserToCar(String carId, String userId) {
 		BufferedReader br = null;
 		FileReader reader = null;
 		FileWriter writer = null;
@@ -297,7 +311,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static void removeUserToCar(String carId, String userId) {
+	public  void removeUserToCar(String carId, String userId) {
 		BufferedReader br = null;
 		FileReader reader = null;
 		FileWriter writer = null;
@@ -346,7 +360,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static void addUser(String id, String firstName, String lastName, String phoneNumber,
+	public  void addUser(String id, String firstName, String lastName, String phoneNumber,
 			String email, String password, int age, int drivingExperience, int drivingLicenseType) {
 		FileWriter writer = null;
 		try {
@@ -382,7 +396,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static void addCarToUser(String carId, String userId) {
+	public  void addCarToUser(String carId, String userId) {
 		BufferedReader br = null;
 		FileReader reader = null;
 		FileWriter writer = null;
@@ -433,7 +447,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static void removeCarToUser(String carId, String userId) {
+	public  void removeCarToUser(String carId, String userId) {
 		BufferedReader br = null;
 		FileReader reader = null;
 		FileWriter writer = null;
@@ -482,7 +496,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	public static void reportDriverDaily(String userId, String carId, String fuel, String mileage, String parkingCost, String drivingCost) {
+	public  void reportDriverDaily(String userId, String carId, String fuel, String mileage, String parkingCost, String drivingCost) {
 		FileWriter writer = null;
 		try {
 			Path p = Paths.get(userPath + "/" + userId);
@@ -498,9 +512,9 @@ public class DatabaseManager {
 				String fileName = d; 
 				File file = new File(userPath + "/" + userId + "/Daily/" + fileName + ".csv");
 				writer = new FileWriter(file, true);
+				writer.write("Car Id," + carId + "\r\n");
 				writer.write("Fuel," + fuel + "\r\n");
 				writer.write("Mileage," + mileage + "\r\n");
-				writer.write("Car Id," + carId + "\r\n");
 				writer.close();
 				
 				if (!parkingCost.equals("0")) {
@@ -525,4 +539,133 @@ public class DatabaseManager {
 		}
 	}
 	
+	
+	public  String getDailyUsage(String userId, String date) {
+		BufferedReader br = null;
+		FileReader reader = null;
+		try {
+			Path p = Paths.get(userPath + "/" + userId);
+			if (Files.isDirectory(p)) {
+				reader = new FileReader(userPath + "/" + userId + "/Daily/" + date + ".csv");
+				br = new BufferedReader(reader);
+				ArrayList<String> lines = new ArrayList<String>();
+				String line;
+				String usage = "";
+				
+				while ((line = br.readLine()) != null) {
+					usage += line + "\r\n";
+				}
+				
+				br.close();
+				reader.close();
+				
+				return usage;
+			}
+		} catch (IOException e) {
+			try {
+				if (br != null) {
+					br.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
+	public  String getDailyUsageBetweenDates(String userId, String fromDate, String toDate) {
+		Path p = Paths.get(userPath + "/" + userId);
+		if (Files.isDirectory(p)) {
+			File folder = new File(userPath + "/" + userId + "/Daily");
+			File[] listOfFiles = folder.listFiles();
+			if (listOfFiles == null) {
+				return null;
+			}
+			String usages = "";
+			String[] filePaths;
+			String filePath;
+			for(File f: listOfFiles) {
+				filePaths = f.getPath().split(Pattern.quote(File.separator));
+				filePath = filePaths[filePaths.length - 1];
+				if (filePath.compareToIgnoreCase(fromDate) >= 0 && filePath.compareToIgnoreCase(toDate) <= 0) {
+					usages += getDailyUsage(userId, filePath.split(".csv")[0]);
+				}
+			}
+			return usages;
+		}
+		return null;
+	}
+	
+	public  String getUserUsageForCar(String userId, String carId) {
+		String usage = "";
+		int fuel = 0, mileage = 0;
+		String[] usages;
+		usage = getDailyUsageBetweenDates(userId, "0", "9");
+		if (usage != null && !usage.equals("")) {
+			usages = usage.split("\r\n");
+			for (int i = 0; i < usages.length; i+=3) {
+				if (usages[i].split(",")[1].equals(carId)) {
+					fuel += Integer.parseInt(usages[i+1].split(",")[1]);
+					mileage += Integer.parseInt(usages[i+2].split(",")[1]);
+				}
+			}
+		}
+		usage = "";
+		usage += "CarId," + carId + "\r\n";
+		usage += "Fuel," + Integer.toString(fuel) + "\r\n";
+		usage += "Mileage," + Integer.toString(mileage) + "\r\n";
+		return usage;
+	}
+	
+	private  String userPassword(String userId) {
+	
+		BufferedReader br = null;
+		FileReader reader = null;
+		try {
+			Path p = Paths.get(userPath + "/" + userId);
+			if (Files.isDirectory(p)) {
+				reader = new FileReader(userPath + "/" + userId + "/Info.csv");
+				br = new BufferedReader(reader);
+				String line;
+				
+				while ((line = br.readLine()) != null) {
+					if (line.split(",")[0].equals("Password")) {
+						br.close();
+						reader.close();
+						return line.split(",")[1];
+					}
+				}
+				
+				br.close();
+				reader.close();
+				
+				
+			}
+		} catch (IOException e) {
+			try {
+				if (br != null) {
+					br.close();
+				}
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
+	
+	public  boolean signIn(String userId, String password) {
+		return password.equals(userPassword(userId));
+	}
 }
