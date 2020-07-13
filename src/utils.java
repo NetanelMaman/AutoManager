@@ -10,6 +10,7 @@ public class utils {
 		String id;
 		System.out.println("Please press 1 to Register and 2 for sign in");
 		int option = s.nextInt();
+		s.nextLine();
 		if (option == 1) {
 			System.out.println("Enter your ID");
 			id = s.nextLine();
@@ -37,7 +38,6 @@ public class utils {
 			manager.addUser(d);
 		} else {
 			System.out.println("Enter your user id");
-			s.nextLine();
 			id = s.nextLine();
 			System.out.println("Enter the password");
 			String pass = s.nextLine();

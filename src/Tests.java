@@ -16,7 +16,8 @@ public class Tests {
 	@Test
 	public void insertUser() {
 		Driver d = new Driver("313391187", "Netanel", "Maman", "054", "netanelM", "123456", 25, 8, 2);
-		manager.addUser("313391187", "Netanel", "Maman", "054", "netanelM", "123456", 25, 8, 2);
+		//manager.addUser("313391187", "Netanel", "Maman", "054", "netanelM", "123456", 25, 8, 2);
+		manager.addUser(d);
 		assertEquals(true, manager.signIn("313391187", "123456"), 
 				"Should return true because we have signed in with the correct password");
 		assertEquals(false, manager.signIn("313391187", "12345"),
@@ -34,7 +35,6 @@ public class Tests {
 		assertEquals(usage, manager.getUserUsageForCar("313391187", "2315342"),
 				"Checks that the usage is still 0 because the car has been added recently");
 		manager.reportDriverDaily("313391187", "2315342", "30", "500", "0", "0");
-		manager.getUserUsageForCar("313391187", "2315342");
 		assertNotEquals("", manager.getUserUsageForCar("313391187", "2315342"));
 	}
 }
