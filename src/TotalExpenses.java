@@ -4,7 +4,6 @@ public class TotalExpenses {
 	private GarageVisit garage;
 	private CarUse usage;
 	private Tickets tickets;
-	private int expense = 0;
 	
 	public TotalExpenses(GarageVisit garage, CarUse usage, Tickets tickets) {
 		super();
@@ -14,11 +13,11 @@ public class TotalExpenses {
 	}
 	
 	public void visitGarage() {
-		expense += garage.getCommetVisit();
+		usage.setExpenses(garage.getCommetVisit());
 	}
 	
 	public void makeTest() {
-		expense += 1517;
+		usage.setExpenses(1517);
 	}
 	
 	public GarageVisit getGarage() {

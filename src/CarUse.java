@@ -2,9 +2,9 @@
 public class CarUse {
 	
 	
-	private int fuel;
-	private int expenses;
-	private int mileage;
+	private int fuel = 0;
+	private int expenses = 0;
+	private int mileage = 0;
 	
 	public CarUse(int fuel, int expenses, int mileage) {
 		super();
@@ -18,7 +18,7 @@ public class CarUse {
 	}
 
 	public void setFuel(int fuel) {
-		this.fuel = fuel;
+		this.fuel += fuel;
 	}
 
 	public int getExpenses() {
@@ -26,7 +26,7 @@ public class CarUse {
 	}
 
 	public void setExpenses(int expenses) {
-		this.expenses = expenses;
+		this.expenses += expenses;
 	}
 
 	public int getMileage() {
@@ -34,7 +34,7 @@ public class CarUse {
 	}
 
 	public void setMileage(int mileage) {
-		this.mileage = mileage;
+		this.mileage += mileage;
 	}
 	
 	
