@@ -1,14 +1,7 @@
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class Tests {
 	DatabaseManager manager = DatabaseManager.getInstance(System.getProperty("user.dir") + "/TestDatabase/Cars",
@@ -18,7 +11,7 @@ public class Tests {
 		Driver d = new Driver("313391187", "Netanel", "Maman", "054", "netanelM", "123456", 25, 8, 2);
 		//manager.addUser("313391187", "Netanel", "Maman", "054", "netanelM", "123456", 25, 8, 2);
 		manager.addUser(d);
-		assertEquals(true, manager.signIn("313391187", "123456"), 
+		assertEquals(true, manager.signIn("313391187", "123456"),
 				"Should return true because we have signed in with the correct password");
 		assertEquals(false, manager.signIn("313391187", "12345"),
 				"Should return false because we have signed in with the wrong password");

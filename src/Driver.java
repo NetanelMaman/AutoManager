@@ -11,6 +11,11 @@ public class Driver extends User{
 	public Driver(String ID, String firstName, String lastName, String phoneNumber,
 						String email, String password, int age, int drivingExperience, int drivingLicenseType) {
 		super(ID, firstName, lastName, phoneNumber, email, password);
+		this.age=age;
+		this.drivingExperience=drivingExperience;
+		this.drivingLicenseType=drivingLicenseType;
+
+
 		// TODO Auto-generated constructor stub
 	}
 

@@ -7,10 +7,15 @@ public class main {
 	public static DatabaseManager manager;
 	
 	public static void main(String[] args) {
-		
+		manager = DatabaseManager.getInstance(System.getProperty("user.dir") + "/Database/Cars",
+				System.getProperty("user.dir") + "/Database/Users");
+		manager.addCar("732", 500, "27.09", "Hatchback", "Opel Astra", "2017", "Black");
+		manager.addCar("731", 600, "27.10", "Hatchback", "Opel Cursa", "2020", "Black");
+		manager.addCar("734", 50, "27.09", "Hatchback", "VOLVO", "2021", "Black");
 		Scanner s = new Scanner(System.in);
 		int option = 1;
 		String userId = utils.registerOrLogin();
+
 		
 		while(option != 0) {
 			System.out.println("Choose operation number:");
